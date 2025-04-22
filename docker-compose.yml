@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  huggingface:
+    build:
+      context: .
+      args:
+        BUILD_FEATURES: huggingface
+    network_mode: host
+    environment:
+      - SERVER_PORT=3000
+      - SERVER_NAME=huggingface-mcp-server
+      - SERVER_VERSION=0.1.0
+    env_file:
+      - .env.prod
+  replicate:
+    build:
+      context: .
+      args:
+        BUILD_FEATURES: replicate
+    network_mode: host
+    environment:
+      - SERVER_PORT=3000
+      - SERVER_NAME=replicate-mcp-server
+      - SERVER_VERSION=0.1.0
+    env_file:
+      - .env.prod
