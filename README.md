@@ -1,5 +1,11 @@
 # Image MCP Servers
 
+<div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+  <img src="assets/fabelis-building.png" alt="Fabelis Building" height="450px" style="border-radius: 8px;"/>
+  <img src="assets/fabelis-compare.png" alt="Fabelis Compare" height="450px" style="border-radius: 8px;"/>
+  <img src="assets/fabelis-castle.png" alt="Fabelis Castle" height="450px" style="border-radius: 8px;"/>
+</div>
+
 This project implements an SSE MCP server that exposes tools for interacting with HuggingFace and Replicate APIs, focusing on image generation and model management. It's built using the MCP Core framework and provides a standardized interface for AI model interactions. Below is a guide to host it yourself!
 
 ## Features
