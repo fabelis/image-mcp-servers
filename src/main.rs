@@ -1,19 +1,45 @@
 mod tools;
+use clap::{Parser, ValueEnum};
 use dotenv::dotenv;
-use mcp_core::{server::Server, transport::ServerSseTransport, types::ServerCapabilities};
+use mcp_core::{
+    server::Server,
+    transport::{ServerSseTransport, ServerStdioTransport},
+    types::ServerCapabilities,
+};
 use serde_json::json;
 use std::env;
 
 #[cfg(any(feature = "huggingface", feature = "replicate"))]
 use tools::*;
 
+#[derive(Parser)]
+#[command(author, version, about, long_about = None)]
+struct Cli {
+    /// Transport type to use
+    #[arg(value_enum, default_value_t = TransportType::Stdio)]
+    transport: TransportType,
+
+    /// Optional path to .env file
+    #[arg(short, long)]
+    env_file: Option<String>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
+enum TransportType {
+    Sse,
+    Stdio,
+}
+
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
-    dotenv().ok();
+    // Load env file from path if provided, otherwise load from default location
+    if let Some(env_path) = Cli::parse().env_file {
+        dotenv::from_path(env_path).ok();
+    } else {
+        dotenv().ok();
+    }
 
-    tracing_subscriber::fmt()
-        .with_max_level(tracing::Level::DEBUG)
-        .init();
+    let cli = Cli::parse();
 
     let server_protocol_builder = Server::builder(
         env::var("SERVER_NAME").expect("SERVER_NAME must be set"),
@@ -59,6 +85,14 @@ async fn main() -> Result<(), anyhow::Error> {
             replicate::GenerateImageTool::call(),
         )
         .register_tool(
+            replicate::EditImageTool::tool(),
+            replicate::EditImageTool::call(),
+        )
+        .register_tool(
+            replicate::EditImageWithMaskTool::tool(),
+            replicate::EditImageWithMaskTool::call(),
+        )
+        .register_tool(
             replicate::GetModelInfoTool::tool(),
             replicate::GetModelInfoTool::call(),
         )
@@ -67,13 +101,32 @@ async fn main() -> Result<(), anyhow::Error> {
             replicate::GetPredictionTool::call(),
         );
 
-    Server::start(ServerSseTransport::new(
-        "0.0.0.0".to_string(),
-        std::env::var("SERVER_PORT")
-            .ok()
-            .and_then(|port| port.parse::<u16>().ok())
-            .unwrap_or_else(|| panic!("SERVER_PORT must be a valid int")),
-        server_protocol_builder.build(),
-    ))
-    .await
+    let server = server_protocol_builder.build();
+
+    match cli.transport {
+        TransportType::Sse => {
+            tracing_subscriber::fmt()
+                .with_max_level(tracing::Level::DEBUG)
+                .init();
+
+            Server::start(ServerSseTransport::new(
+                "0.0.0.0".to_string(),
+                env::var("SERVER_PORT")
+                    .ok()
+                    .and_then(|p| p.parse::<u16>().ok())
+                    .expect("SERVER_PORT must be a valid int"),
+                server,
+            ))
+            .await
+        }
+        TransportType::Stdio => {
+            // Prevents the server from logging to stdout
+            tracing_subscriber::fmt()
+                .with_max_level(tracing::Level::DEBUG)
+                .with_writer(std::io::stderr)
+                .init();
+
+            Server::start(ServerStdioTransport::new(server)).await
+        }
+    }
 }

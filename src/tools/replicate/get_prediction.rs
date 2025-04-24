@@ -37,11 +37,6 @@ mod tests {
     async fn test_get_prediction_tool() {
         dotenv().ok();
 
-        if std::env::var("REPLICATE_API_TOKEN").is_err() {
-            println!("Skipping test_get_prediction_tool: No API token available");
-            return;
-        }
-
         if std::env::var("REPLICATE_PREDICTION_ID").is_err() {
             println!("Skipping test_get_prediction_tool: No prediction ID available");
             return;
