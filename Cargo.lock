@@ -1143,9 +1143,9 @@ checksum = "13dc2df351e3202783a1fe0d44375f7295ffb4049267b0f3018346dc122a1d94"
 
 [[package]]
 name = "mcp-core"
-version = "0.1.43"
+version = "0.1.44"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "61c5a36e314b7ef4dd16d712295248071b1768bab6e875acb7d360f63ca4a86f"
+checksum = "ef1a0764c61c969c6ec90e4841ae0040f60344f22255fddc206bbf791fa34898"
 dependencies = [
  "actix-web",
  "anyhow",
@@ -1164,9 +1164,9 @@ dependencies = [
 
 [[package]]
 name = "mcp-core-macros"
-version = "0.1.11"
+version = "0.1.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fe81fc0467c71468ab49044e0ffadf7596931cc62d61e63bfe7865fb8725a5d7"
+checksum = "1fd72aa93fd891a69734fc3120e5a3d4e360eeb6598b1fe11770c3f12a85fcc3"
 dependencies = [
  "async-trait",
  "convert_case",
@@ -1190,6 +1190,16 @@ name = "mime"
 version = "0.3.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6877bb514081ee2a7ff5ef9de3281f14a4dd4bceac4c09388074a6b5df8a139a"
+
+[[package]]
+name = "mime_guess"
+version = "2.0.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f7c44f8e672c00fe5308fa235f821cb4198414e1c77935c1ab6948d3fd78550e"
+dependencies = [
+ "mime",
+ "unicase",
+]
 
 [[package]]
 name = "minimal-lexical"
@@ -1508,6 +1518,7 @@ dependencies = [
  "js-sys",
  "log",
  "mime",
+ "mime_guess",
  "native-tls",
  "once_cell",
  "percent-encoding",
@@ -2134,6 +2145,12 @@ name = "typenum"
 version = "1.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1dccffe3ce07af9386bfd29e80c0ab1a8205a2fc34e4bcd40364df902cfa8f3f"
+
+[[package]]
+name = "unicase"
+version = "2.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "75b844d17643ee918803943289730bec8aac480150456169e647ed0b576ba539"
 
 [[package]]
 name = "unicode-ident"
